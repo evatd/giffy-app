@@ -1,6 +1,12 @@
 import React, { Component } from "react";
 import loader from "./images/loader.svg";
 
+// get a random image every time
+const randomChoice = arr => {
+  const randIndex = Math.floor(Math.random() * arr.length);
+  return arr[randIndex];
+};
+
 // the flow of the state: every time we update the input,
 // it's running the handleChange event,
 // setting the state with our search term via setState, cheking if < or > 2 characters
@@ -8,7 +14,7 @@ import loader from "./images/loader.svg";
 // then, it's picked up in the properties inside the actual UserHint component and rendered: the state
 const Header = () => (
   <div className="header grid">
-    <h1 className="title">Jiffy</h1>
+    <h1 className="title">Giffy</h1>
   </div>
 );
 
@@ -43,7 +49,9 @@ class App extends Component {
     this.state = {
       searchTerm: "",
       hintText: "",
-      gif: null
+      gif: null,
+      // we have an array of gifs, stacking on top of each other
+      gifs: []
     };
   }
 
@@ -70,19 +78,40 @@ class App extends Component {
       // so we grab our first key inside data that's called data via {}
       const { data } = await response.json();
 
+      // here we grab a random result from our images (i.e. our array called data)
+      const randomGif = randomChoice(data);
+
+      console.log(data);
+      console.log({ randomGif });
+
+      // this is our state!
       // we are going to return the previous state, don't want to overwrite it
       this.setState((prevState, props) => ({
         // get our old props and spread them out there
         ...prevState,
+
         // and overwrite the git, setting the gif
         // to be the first image from that array of results (called data)
-        gif: data[0]
+        // gif: data[0]
+
+        // update: and overwrite the git, setting the gif
+        // show a random result
+        gif: randomGif,
+
+        // add an array of gifs, to deliver lots of videos (gifs)
+        // and stack them on top of each toher
+        // so, we use our spread to take the prev gifs
+        // spread them out, then add a random gif onto the end
+        // then map through this array in render, so they show up on the page
+        gifs: [...prevState.gifs, randomGif]
       }));
 
       console.log(data);
 
       // if our fetch fails, we catch it down here
-    } catch (error) {}
+    } catch (error) {
+      alert("oh no!");
+    }
   };
 
   // handleChange: every time the input changes, it's going to give us an event with a snapshot of what happened
@@ -122,17 +151,23 @@ class App extends Component {
     return (
       <div className="page">
         <Header />
+
         <div className="search grid">
           {/* our stack of videos mp4 which we make behave like gifs via loop: mp4 due to better performance */}
-          {/* only going to render our video when we have a gif in the state, 
-          inspired by an error: nothing loads because we don't have images on our null (default)
-          and gif is defaulted as null / empty value*/}
-        {gif && <video
-            className="grid-tem video"
-            autoPlay
-            loop
-            src={gif.images.original.mp4}
-          />}
+          {/* here we loop over our array of gif images from our state and we create
+          multiple videos from it 
+          so, we go over each one of the gifs
+          when it maps over, it gets data from gif (in (gif =>)
+          and create multiple components (videos) from that*/}
+          {this.state.gifs.map(gif => (
+            <video
+              className="grid-item video"
+              autoPlay
+              loop
+              src={gif.images.original.mp4}
+            />
+          ))}
+
           <input
             className="input grid-item"
             placeholder="Type something"
