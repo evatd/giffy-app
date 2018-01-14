@@ -19,7 +19,7 @@ const Header = (clearSearch) => (
   <div className="header grid">
   {/* we call the clearSearch method via onClick
   but need to pass in clearSearch as an argument */}
-    <h1 className="title">onClick={clearSearch}</h1>
+    <h1 className="title" onClick={clearSearch}>Giffy</h1>
   </div>
 );
 
@@ -186,7 +186,7 @@ class App extends Component {
       <div className="page">
       {/* send the method clearSearch to this component, like
       nameOfMethod = {this.nameOfMethod}
-      {} as it's a JS function */}
+      {} as it's a Javascript function, we send the name of it */}
         <Header clearSearch={this.clearSearch}/>
         <div className="search grid">
           {/* our stack of videos mp4 which we make behave like gifs via loop: mp4 due to better performance */}
