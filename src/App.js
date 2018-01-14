@@ -1,6 +1,7 @@
 import React, { Component } from "react";
 import loader from "./images/loader.svg";
 import Gif from "./Gif";
+import clearButton from "./images/close-icon.svg";
 
 // we control changes and user hints in the state
 
@@ -10,16 +11,30 @@ const randomChoice = arr => {
   return arr[randIndex];
 };
 
-// the flow of the state: every time we update the input,
+// no.1: the flow of the state: every time we update the input,
 // it's running the handleChange event,
 // setting the state with our search term via setState, cheking if < or > 2 characters
 // then our hintText is passed down to our UserHint component in render
 // then, it's picked up in the properties inside the actual UserHint component and rendered: the state
-const Header = (clearSearch) => (
+
+// no.2: we pick out our props inside the header component
+// we can pass down functions as props as well as things
+// like numbers, strings, arrays, or objects
+// so, we pass functions clearSearch and hasResults down to Header, via render
+// pass into Header as arguments - inside ({}) !
+// and trigger them via onClick inside the Header component
+const Header = ({ clearSearch, hasResults }) => (
   <div className="header grid">
-  {/* we call the clearSearch method via onClick
-  but need to pass in clearSearch as an argument */}
-    <h1 className="title" onClick={clearSearch}>Giffy</h1>
+    {/* if we have results, show the clear icon, otherwise the title
+  so that the user can restart the search
+  add the onClick onto the button itself */}
+    {hasResults ? (
+      <button onClick={clearSearch}>
+        <img src={clearButton} />
+      </button>
+    ) : (
+      <h1 className="title">Giffy</h1>
+    )}
   </div>
 );
 
@@ -169,6 +184,7 @@ class App extends Component {
   };
 
   // here we reset the state and clear it all out
+  // and making it default again, like in our original state - prevState
   // say, if a user wants to quit the seach and restart
   clearSearch = () => {
     this.setState((prevState, props) => ({
@@ -177,17 +193,26 @@ class App extends Component {
       hintText: " ",
       gifs: []
     }));
+    // here we grab the input and focus the cursor back onto it
+    // refs enable us to access html elements in react code
+    
+
+
   };
   render() {
     // pull off search term from this.state
-    // create a searchTerm / gif variable off our state and can thus skip tis.state.gif... below
-    const { searchTerm, gif } = this.state;
+    // create a searchTerm / gif variable off our state and can thus skip this.state.gif... below
+    // update: change gif to gifs when we start getting all of our data from the gifs array
+    const { searchTerm, gifs } = this.state;
+    // we set a variable to see if we have any gifs
+    // if we have no results, then the length is 0
+    const hasResults = gifs.length;
     return (
       <div className="page">
-      {/* send the method clearSearch to this component, like
-      nameOfMethod = {this.nameOfMethod}
-      {} as it's a Javascript function, we send the name of it */}
-        <Header clearSearch={this.clearSearch}/>
+        {/* send the method clearSearch to this component as a prop,
+         like nameOfMethod = {this.nameOfMethod}
+        {} as it's a Javascript function, we send the name of it */}
+        <Header clearSearch={this.clearSearch} hasResults={hasResults} />
         <div className="search grid">
           {/* our stack of videos mp4 which we make behave like gifs via loop: mp4 due to better performance */}
           {/* here we loop over our array of gif images from our state and we create
@@ -196,7 +221,9 @@ class App extends Component {
           when it maps over, it gets data from gif (passed in as variable (gif =>)
           and create multiple components (videos) from that*/}
           {this.state.gifs.map(gif => (
-            // we spread all of our properties, seen in gif (of each gif, which is an object)
+            // we spread out all of our properties onto our Gif component
+            // properties of each gif, which is an object,
+            // passed in as an argument to the map function
             <Gif {...gif} />
           ))}
           <input
