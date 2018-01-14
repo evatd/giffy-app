@@ -1,5 +1,8 @@
 import React, { Component } from "react";
 import loader from "./images/loader.svg";
+import Gif from "./Gif";
+
+// we control changes and user hints in the state
 
 // get a random image every time
 const randomChoice = arr => {
@@ -48,6 +51,7 @@ class App extends Component {
     super(props);
     this.state = {
       searchTerm: "",
+      loading: false,
       hintText: "",
       gif: null,
       // we have an array of gifs, stacking on top of each other
@@ -62,14 +66,16 @@ class App extends Component {
   // we can write async methods into our comppnents
   // that let us use the async/await style of function
   searchGiffy = async searchTerm => {
-    // first we try out fetch
+    // before any fetching happens, the loading spinner is set to true
+    this.setState({
+      loading: true
+    });
+    // first we try our fetch
     try {
       // we use await keyword as this is an asynchronous call, wait for our response
       // when we embed your search term, change the "" to ``
       const response = await fetch(
-        `https://api.giphy.com/v1/gifs/search?api_key=kCeGJXK0Yf7kz14vm8s4UbtLQZkY5c5r&q=${
-          searchTerm
-        }&limit=100&offset=0&rating=PG&lang=en`
+        `https://api.giphy.com/v1/gifs/search?api_key=kCeGJXK0Yf7kz14vm8s4UbtLQZkY5c5r&q=${searchTerm}&limit=100&offset=0&rating=PG&lang=en`
       );
 
       // here get data and we convert our raw response into json data
@@ -77,6 +83,15 @@ class App extends Component {
       // and we have data inside of it,
       // so we grab our first key inside data that's called data via {}
       const { data } = await response.json();
+
+      // here we check if the array of results is empty,
+      // i.e. no results for a search term
+      // if it is, we throw an error which will stop
+      // the code here and handle it in the catch area
+      // i.e. we throw an error and catch it in catch
+      if (!data.length) {
+        throw `Nothing found for ${searchTerm}`;
+      }
 
       // here we grab a random result from our images (i.e. our array called data)
       const randomGif = randomChoice(data);
@@ -94,8 +109,7 @@ class App extends Component {
         // to be the first image from that array of results (called data)
         // gif: data[0]
 
-        // update: and overwrite the git, setting the gif
-        // show a random result
+        // update: and overwrite the gif, show a random result
         gif: randomGif,
 
         // add an array of gifs, to deliver lots of videos (gifs)
@@ -103,14 +117,30 @@ class App extends Component {
         // so, we use our spread to take the prev gifs
         // spread them out, then add a random gif onto the end
         // then map through this array in render, so they show up on the page
-        gifs: [...prevState.gifs, randomGif]
+        gifs: [...prevState.gifs, randomGif],
+        // we turn off our loading spinner again, post-fetch
+        loading: false,
+        // we update /overwrite the hint text 
+        // it says 'MORE cats' after the user has looked up cats
+        // and cat gits have been shown to them, i.e. the search was successful
+        hintText: `Hit enter to see more ${searchTerm}`
       }));
 
       console.log(data);
 
       // if our fetch fails, we catch it down here
+      // error is an argument that catches our throw
     } catch (error) {
-      alert("oh no!");
+      this.setState((prevState, props) => ({
+        // here we overwrite our hint text with error
+        //hint text is already in render, a component
+        // hence we piggyback on it and update it, no changes in return/render needed
+        // spread the previous state, to compare if there's a change (no results found)
+        ...prevState,
+        hintText: error,
+        loading: false
+      }));
+      console.log(error);
     }
   };
 
@@ -144,6 +174,9 @@ class App extends Component {
     }
   };
 
+  // here we reset the state and clear it all out
+  // say, if a user wants to quit the seach and restart
+  
   render() {
     // pull off search term from this.state
     // create a searchTerm / gif variable off our state and can thus skip tis.state.gif... below
@@ -157,17 +190,12 @@ class App extends Component {
           {/* here we loop over our array of gif images from our state and we create
           multiple videos from it 
           so, we go over each one of the gifs
-          when it maps over, it gets data from gif (in (gif =>)
+          when it maps over, it gets data from gif (passed in as variable (gif =>)
           and create multiple components (videos) from that*/}
           {this.state.gifs.map(gif => (
-            <video
-              className="grid-item video"
-              autoPlay
-              loop
-              src={gif.images.original.mp4}
-            />
+            // we spread all of our properties, seen in gif (of each gif, which is an object)
+            <Gif {...gif} />
           ))}
-
           <input
             className="input grid-item"
             placeholder="Type something"
