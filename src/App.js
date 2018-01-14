@@ -15,9 +15,11 @@ const randomChoice = arr => {
 // setting the state with our search term via setState, cheking if < or > 2 characters
 // then our hintText is passed down to our UserHint component in render
 // then, it's picked up in the properties inside the actual UserHint component and rendered: the state
-const Header = () => (
+const Header = (clearSearch) => (
   <div className="header grid">
-    <h1 className="title">Giffy</h1>
+  {/* we call the clearSearch method via onClick
+  but need to pass in clearSearch as an argument */}
+    <h1 className="title">onClick={clearSearch}</h1>
   </div>
 );
 
@@ -182,9 +184,10 @@ class App extends Component {
     const { searchTerm, gif } = this.state;
     return (
       <div className="page">
-        <Header />
-        {/* we need to call our clearSearch function whoch we do onClick */}
-        <h1 onClick={this.clearSearch}>Clear Search</h1>
+      {/* send the method clearSearch to this component, like
+      nameOfMethod = {this.nameOfMethod}
+      {} as it's a JS function */}
+        <Header clearSearch={this.clearSearch}/>
         <div className="search grid">
           {/* our stack of videos mp4 which we make behave like gifs via loop: mp4 due to better performance */}
           {/* here we loop over our array of gif images from our state and we create
