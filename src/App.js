@@ -112,7 +112,7 @@ class App extends Component {
         gifs: [...prevState.gifs, randomGif],
         // we turn off our loading spinner again, post-fetch
         loading: false,
-        // we update /overwrite the hint text 
+        // we update /overwrite the hint text
         // it says 'MORE cats' after the user has looked up cats
         // and cat gits have been shown to them, i.e. the search was successful
         hintText: `Hit enter to see more ${searchTerm}`
@@ -168,7 +168,14 @@ class App extends Component {
 
   // here we reset the state and clear it all out
   // say, if a user wants to quit the seach and restart
-
+  clearSearch = () => {
+    this.setState((prevState, props) => ({
+      ...prevState,
+      searchTerm: " ",
+      hintText: " ",
+      gifs: []
+    }));
+  };
   render() {
     // pull off search term from this.state
     // create a searchTerm / gif variable off our state and can thus skip tis.state.gif... below
@@ -176,7 +183,8 @@ class App extends Component {
     return (
       <div className="page">
         <Header />
-
+        {/* we need to call our clearSearch function whoch we do onClick */}
+        <h1 onClick={this.clearSearch}>Clear Search</h1>
         <div className="search grid">
           {/* our stack of videos mp4 which we make behave like gifs via loop: mp4 due to better performance */}
           {/* here we loop over our array of gif images from our state and we create
