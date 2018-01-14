@@ -186,18 +186,20 @@ class App extends Component {
   // here we reset the state and clear it all out
   // and making it default again, like in our original state - prevState
   // say, if a user wants to quit the seach and restart
+  // also, NO space between "" (no " ")! otherwise, blank space overwrites
+  // the input's original form, resulting in no placeholder. 
   clearSearch = () => {
     this.setState((prevState, props) => ({
       ...prevState,
-      searchTerm: " ",
-      hintText: " ",
+      searchTerm: "",
+      hintText: "",
       gifs: []
     }));
     // here we grab the input and focus the cursor back onto it
     // refs enable us to access html elements in react code
-    
-
-
+    // so, console.log(this.textInput) will grab/show the input and give raw HTML
+    // focus puts the cursor onto the input for us
+    this.textInput.focus();
   };
   render() {
     // pull off search term from this.state
@@ -232,9 +234,12 @@ class App extends Component {
             onChange={this.handleChange}
             onKeyPress={this.handleKeyPress}
             value={searchTerm}
+            ref={input => {
+              this.textInput = input;
+            }}
           />
         </div>
-        {/* grabbing a state and passing it onto our component using a spread */}
+        {/* grabbing all of our state and passing it onto our component using a spread */}
         <UserHint {...this.state} />
       </div>
     );
