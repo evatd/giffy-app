@@ -53,7 +53,6 @@ class App extends Component {
       searchTerm: "",
       loading: false,
       hintText: "",
-      gif: null,
       // we have an array of gifs, stacking on top of each other
       gifs: []
     };
@@ -104,13 +103,6 @@ class App extends Component {
       this.setState((prevState, props) => ({
         // get our old props and spread them out there
         ...prevState,
-
-        // and overwrite the git, setting the gif
-        // to be the first image from that array of results (called data)
-        // gif: data[0]
-
-        // update: and overwrite the gif, show a random result
-        gif: randomGif,
 
         // add an array of gifs, to deliver lots of videos (gifs)
         // and stack them on top of each toher
@@ -176,7 +168,7 @@ class App extends Component {
 
   // here we reset the state and clear it all out
   // say, if a user wants to quit the seach and restart
-  
+
   render() {
     // pull off search term from this.state
     // create a searchTerm / gif variable off our state and can thus skip tis.state.gif... below
