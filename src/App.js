@@ -1,7 +1,7 @@
 import React, { Component } from "react";
 import loader from "./images/loader.svg";
 import Gif from "./Gif";
-import clearButton from "./images/close-icon.svg";
+import Header from "./Header";
 
 // we control changes and user hints in the state
 
@@ -16,28 +16,6 @@ const randomChoice = arr => {
 // setting the state with our search term via setState, cheking if < or > 2 characters
 // then our hintText is passed down to our UserHint component in render
 // then, it's picked up in the properties inside the actual UserHint component and rendered: the state
-
-// no.2: we pick out our props inside the header component
-// we can pass down functions as props as well as things
-// like numbers, strings, arrays, or objects
-// so, we pass functions clearSearch and hasResults down to Header, via render
-// pass into Header as arguments - inside ({}) !
-// and trigger them via onClick inside the Header component
-const Header = ({ clearSearch, hasResults }) => (
-  <div className="header grid">
-    {/* if we have results, show the clear icon, otherwise the title
-  so that the user can restart the search
-  add the onClick onto the button itself */}
-    {hasResults ? (
-      <button onClick={clearSearch}>
-        <img src={clearButton} />
-      </button>
-    ) : (
-      <h1 className="title">Giffy</h1>
-    )}
-  </div>
-);
-
 const UserHint = ({ loading, hintText }) => (
   <div className="user-hint">
     {/* here we check if we have a loading state
@@ -187,7 +165,7 @@ class App extends Component {
   // and making it default again, like in our original state - prevState
   // say, if a user wants to quit the seach and restart
   // also, NO space between "" (no " ")! otherwise, blank space overwrites
-  // the input's original form, resulting in no placeholder. 
+  // the input's original form, resulting in no placeholder.
   clearSearch = () => {
     this.setState((prevState, props) => ({
       ...prevState,
@@ -209,12 +187,14 @@ class App extends Component {
     // we set a variable to see if we have any gifs
     // if we have no results, then the length is 0
     const hasResults = gifs.length;
+
     return (
       <div className="page">
         {/* send the method clearSearch to this component as a prop,
          like nameOfMethod = {this.nameOfMethod}
         {} as it's a Javascript function, we send the name of it */}
         <Header clearSearch={this.clearSearch} hasResults={hasResults} />
+        {/* <Header {...this.props}/> */}
         <div className="search grid">
           {/* our stack of videos mp4 which we make behave like gifs via loop: mp4 due to better performance */}
           {/* here we loop over our array of gif images from our state and we create
