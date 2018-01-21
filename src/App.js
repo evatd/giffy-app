@@ -1,7 +1,7 @@
 import React, { Component } from "react";
-import loader from "./images/loader.svg";
 import Gif from "./Gif";
 import Header from "./Header";
+import UserHint from "./UserHint";
 
 // we control changes and user hints in the state
 
@@ -10,24 +10,6 @@ const randomChoice = arr => {
   const randIndex = Math.floor(Math.random() * arr.length);
   return arr[randIndex];
 };
-
-// no.1: the flow of the state: every time we update the input,
-// it's running the handleChange event,
-// setting the state with our search term via setState, cheking if < or > 2 characters
-// then our hintText is passed down to our UserHint component in render
-// then, it's picked up in the properties inside the actual UserHint component and rendered: the state
-const UserHint = ({ loading, hintText }) => (
-  <div className="user-hint">
-    {/* here we check if we have a loading state
-  and render out either out spinner or hinText based on that,
-  using a tenary operator (if/else)*/}
-    {loading ? (
-      <img className="block mx-auto" alt="loader" src={loader} />
-    ) : (
-      hintText
-    )}
-  </div>
-);
 
 // class component = we have to use a this keyword in the event
 // every time our input changes, we're going to run a function called handle change
@@ -183,7 +165,7 @@ class App extends Component {
     // pull off search term from this.state
     // create a searchTerm / gif variable off our state and can thus skip this.state.gif... below
     // update: change gif to gifs when we start getting all of our data from the gifs array
-    const { searchTerm, gifs } = this.state;
+    const { searchTerm, gifs, hintText, loading } = this.state;
     // we set a variable to see if we have any gifs
     // if we have no results, then the length is 0
     const hasResults = gifs.length;
@@ -194,7 +176,6 @@ class App extends Component {
          like nameOfMethod = {this.nameOfMethod}
         {} as it's a Javascript function, we send the name of it */}
         <Header clearSearch={this.clearSearch} hasResults={hasResults} />
-        {/* <Header {...this.props}/> */}
         <div className="search grid">
           {/* our stack of videos mp4 which we make behave like gifs via loop: mp4 due to better performance */}
           {/* here we loop over our array of gif images from our state and we create
@@ -220,7 +201,8 @@ class App extends Component {
           />
         </div>
         {/* grabbing all of our state and passing it onto our component using a spread */}
-        <UserHint {...this.state} />
+        {/* passing state and not props because hintText and Loading are in the state */}
+        <UserHint loading={loading} hintText={hintText} />
       </div>
     );
   }
